@@ -1,47 +1,61 @@
 ---
-description: Phân công 4 vai trò và kế hoạch checkpoint Day 13 Observability
+description: Phân công 4 vai trò (Tín, Thắng, Quân, Hùng) và checkpoint Day 13 Observability
 alwaysApply: true
 ---
 
 # Phân công nhóm & Checkpoint
 
-## 4 vai trò
+## 4 vai trò chính
 
-| Vai trò | Phụ trách chính | File / script liên quan |
-|---------|-----------------|-------------------------|
-| **Hùng — Logging & Middleware** | Correlation ID, metadata log (`user_id_hash`, `session_id`, `feature`, `model`, `env`) | `app/middleware.py`, `app/logging_config.py` |
-| **Hùng — Security & Compliance** | Uncomment PII processor, regex redaction (email, SĐT, số thẻ) | `app/logging_config.py`, processor PII |
-| **Hùng — Metrics & Alerting** | Langfuse (≥10 traces), prompt v1/v2, error_rate, SLO, alert, runbook | `app/tracing.py`, `config/alerts.yaml`, `docs/alerts.md` |
-| **Hùng — QA & Incident Analyst** | Load test, dashboard spec, CP3 incident, `submission/REPORT.md` | `config/dashboard.yaml`, `scripts/validate_*.py` |
+| Thành viên | Vai trò | Phụ trách chính | File / script liên quan |
+|------------|---------|-----------------|-------------------------|
+| **Tín** | Logging & PII / Middleware | Correlation ID, metadata log, che PII | `app/middleware.py`, `app/main.py`, `app/logging_config.py` |
+| **Thắng** | Tracing & Prompt Version / Security | PII processor, Langfuse traces, prompt v1/v2 | `app/logging_config.py`, `app/tracing.py`, `docs/PROMPT_VERSIONING.md` |
+| **Quân** | Dashboard, SLO & Alert / Metrics | Langfuse metrics, error_rate, SLO, alert, runbook, dashboard | `app/tracing.py`, `config/dashboard.yaml`, `config/alerts.yaml`, `docs/alerts.md` |
+| **Hùng** | Incident, Report & Demo / QA | Load test, dashboard spec, CP3 incident, REPORT.md | `scripts/load_test.py`, `scripts/validate_*.py`, `submission/REPORT.md` |
+
+### Phân công chi tiết theo file
+
+- **Tín** (Logging & Middleware): CP1 — middleware, correlation ID, gán metadata (`user_id_hash`, `session_id`, `feature`, `model`, `env`).
+- **Thắng** (Security & Compliance): CP1 — uncomment PII processor, regex che email/SĐT/số thẻ toàn cục.
+- **Quân** (Metrics & Alerting): CP2 — tích hợp Langfuse, `error_rate_pct`, SLO, alert rules, runbook.
+- **Hùng** (QA & Incident Analyst): CP0 load test, thiết kế Dashboard Spec, chủ trì CP3, hoàn thiện `submission/REPORT.md`.
 
 ## Checkpoint
 
 ### CP0 — Setup (0:00–0:30)
 - **Cả nhóm**: SETUP.md, API + load test chạy được.
-- **QA**: Chạy load test, đảm bảo có `data/logs.jsonl`.
+- **Tín**: `python scripts/validate_logs.py` lấy baseline, lưu báo cáo; đảm bảo có `data/logs.jsonl`.
+- **Quân**: `python scripts/validate_dashboard.py` hiểu contract dashboard.
 
 ### CP1 — Logging & PII (0:30–1:30)
-- **Logging & Middleware**: Correlation ID mỗi request + đủ metadata.
-- **Security & Compliance**: Che PII toàn cục, không lộ nguyên văn trong log.
-- **Phối hợp A+B**: `python scripts/validate_logs.py` ≥ 80/100.
-- **Bàn giao**: Log có correlation ID và PII đã redacted.
+- **Tín** (chính): Correlation ID hợp lệ; metadata đủ trường; chạy `validate_logs.py` ≥ 80/100.
+- **Thắng**: Che PII — email, SĐT, số thẻ không xuất hiện nguyên văn trong log.
+- **Phối hợp Tín + Thắng**: `python scripts/validate_logs.py` ≥ 80/100.
+- **Kiểm tra PII** (PowerShell): `Select-String "@" data/logs.jsonl` và `"4111"` không có kết quả; `"REDACTED"` phải có.
+- **Bàn giao**: Log có correlation ID + bằng chứng PII đã redacted.
 
 ### CP2 — Metrics, traces, dashboard (1:30–2:30)
-- **Metrics & Alerting**: ≥10 traces Langfuse; prompt v1/v2 với `prompt_name`, `prompt_label`, `prompt_version`; SLO + alert + runbook; evidence rollback → `submission/evidence/`.
-- **QA**: Dashboard 6 nhóm chỉ số theo `config/dashboard.yaml`; `python scripts/validate_dashboard.py` hợp lệ.
-- **Bàn giao**: Ảnh dashboard (time range, đơn vị, threshold) + trace prompt.
+- **Thắng**: ≥10 traces Langfuse có metadata; prompt v1/v2 (`prompt_name`, `prompt_label`, `prompt_version`); thao tác đổi label/rollback.
+- **Quân**: Dashboard 6 nhóm chỉ số theo `config/dashboard.yaml` (latency, traffic, error, token/cost, quality); SLO/threshold; `validate_dashboard.py` hợp lệ.
+- **Hùng**: Thiết kế Dashboard Spec (phối hợp Quân).
+- **Bàn giao**: Trace gắn prompt version + ảnh rollback → `submission/evidence/`; ảnh dashboard (time range, đơn vị, threshold).
 
 ### CP3 — Challenge (2:30–3:30)
-- **QA**: Chủ trì sau khi Lab Coach release `config/challenge.json`; chạy incident input.
-- **Phối hợp**: Metrics (D+C) → trace khoanh span lỗi (C) → log xác minh root cause (A+B) → fix + preventive.
+- **Hùng** (điều phối): Chờ Lab Coach release `config/challenge.json`; chạy incident và bơm input.
+- **Quân**: Quan sát metrics, xác định triệu chứng bất thường.
+- **Thắng**: Dựa thời gian lỗi, trace khoanh vùng span sự cố.
+- **Tín**: Đọc log span đó, chứng minh root cause.
+- **Hùng**: Đề xuất fix + biện pháp phòng ngừa.
 - **Bàn giao**: Root cause, fix, preventive measure.
 
 ### Hoàn tất (3:30–4:00)
-- **QA**: Hoàn thiện `submission/REPORT.md`; demo luồng **Metrics → Traces → Logs → Root cause**.
-- **Cả nhóm**: Không commit secret/`.env`/API key/PII chưa che; commit source + evidence hợp lệ.
+- **Hùng**: Hoàn thiện `submission/REPORT.md`; kịch bản demo **Metrics → Traces → Logs → Root cause**.
+- **Cả nhóm**: Không commit secret/`.env`/API key/PII chưa che; commit source + evidence; chuẩn bị giải thích phần việc cá nhân.
 
 ## Quy tắc khi agent hỗ trợ
 
-- Chỉ sửa phạm vi vai trò đang làm việc; phối hợp checkpoint thì ghi rõ ai làm gì.
+- Chỉ sửa phạm vi vai trò đang làm việc; phối hợp checkpoint thì ghi rõ Tín/Thắng/Quân/Hùng làm gì.
 - Luôn chạy validator tương ứng trước khi coi checkpoint xong.
 - Evidence lưu tại `submission/evidence/`; báo cáo tại `submission/REPORT.md`.
+- Trên Windows dùng `Select-String` hoặc `findstr` thay cho `grep`.
