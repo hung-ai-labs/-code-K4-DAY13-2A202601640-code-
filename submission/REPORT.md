@@ -16,8 +16,8 @@
 
 ## 3. Logging và tracing
 
-- Evidence correlation ID:
-- Evidence PII redaction:
+- Evidence correlation ID: req-e73801fe
+- Evidence PII redaction: [REDACTED_EMAIL] thay email gốc
 - Evidence trace waterfall:
 - Giải thích một span đáng chú ý:
 
@@ -51,5 +51,5 @@
 Với mỗi thành viên, ghi rõ nhiệm vụ và link commit/PR tương ứng.
 
 | Thành viên | Phần việc | Commit/PR | Điều đã học |
-|---|---|---|---|
-| | | | |
+| ---------- | --------- | --------- | ----------- |
+|            |           |           |             |
