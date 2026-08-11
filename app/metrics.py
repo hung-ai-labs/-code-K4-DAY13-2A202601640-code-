@@ -27,6 +27,16 @@ def record_error(error_type: str) -> None:
     ERRORS[error_type] += 1
 
 
+def reset() -> None:
+    global TRAFFIC
+    REQUEST_LATENCIES.clear()
+    REQUEST_COSTS.clear()
+    REQUEST_TOKENS_IN.clear()
+    REQUEST_TOKENS_OUT.clear()
+    ERRORS.clear()
+    QUALITY_SCORES.clear()
+    TRAFFIC = 0
+
 
 def percentile(values: list[int], p: int) -> float:
     if not values:
