@@ -4,7 +4,7 @@
 
 - Tên nhóm: K4 — Nhóm 4 (Tín, Thắng, Quân, Hùng)
 - Repository URL: https://github.com/hung-ai-labs/-code-K4-DAY13-2A202601640-code-
-- Commit SHA cuối: <!-- TODO: cập nhật SHA của commit nộp bài cuối cùng trước khi nộp -->
+- Commit SHA cuối: `5247def1b7147804dd0fd948e2f58f730f1fbd47` (cập nhật lại nếu có commit mới sau khi push bản này)
 - Thành viên và vai trò:
   - Tín — Logging & PII (correlation ID, log metadata, PII redaction)
   - Thắng — Tracing & Prompt Version (traces Langfuse, prompt v1/v2, rollback)
