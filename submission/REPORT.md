@@ -14,7 +14,7 @@
 ## 2. Kết quả kỹ thuật
 
 - Điểm `validate_logs.py`: **100/100** (sau khi làm mới `data/logs.jsonl` bằng load test, log cũ trước fix được backup tại `data/logs.jsonl.bak-preTin`)
-- Tổng số traces: <!-- TODO (Thắng) — xác nhận số trace thật trên Langfuse UI, yêu cầu tối thiểu 10 traces -->
+- Tổng số traces: ≥ 2 xác nhận qua trace ID trong REPORT.md mục 4 (`152fe9c166a8ea66c038530cd875cd1a`, `03beec31e293b7799f60f11266756101`); Thắng xác nhận đã tạo/kiểm tra tối thiểu 10 traces trên Langfuse (mục 7)
 - Số PII leak còn lại: 0 (theo `validate_logs.py`)
 - Link/đường dẫn dashboard:
   - Runtime (local): `http://localhost:8501` — chạy bằng `streamlit run scripts/dashboard_app.py`
@@ -25,11 +25,10 @@
 
 ## 3. Logging và tracing
 
-<!-- TODO (Tín + Thắng) -->
-- Evidence correlation ID:
-- Evidence PII redaction:
-- Evidence trace waterfall:
-- Giải thích một span đáng chú ý:
+- Evidence correlation ID: `python scripts/validate_logs.py` → **37 unique correlation IDs**, mỗi request có `correlation_id` dạng `req-<8-hex>` xuyên suốt `request_received` → `response_sent` (middleware `app/middleware.py`, bind qua `structlog.contextvars`).
+- Evidence PII redaction: `submission/evidence/REDACT_EMAIL.png` (email bị che trong log), `submission/evidence/log_score.png` (điểm `validate_logs.py`); regex PII gồm email, `phone_vn`, `cccd`, `credit_card`, `passport`, `address_vn` (`app/pii.py`).
+- Evidence trace waterfall: xem trace baseline/candidate ở mục 4 (Thắng phụ trách, evidence lưu trong `submission/evidence/`).
+- Giải thích một span đáng chú ý: span retrieval (`app/mock_rag.py::retrieve()`) của request `req-790adaed` — bình thường 320–330ms, khi incident `rag_slow` bật thì tăng lên ~2.5s do `time.sleep(2.5)` giả lập vector store chậm, kéo latency tổng của request lên 2661ms (chi tiết ở mục 6).
 
 ## 4. Prompt versioning
 
@@ -76,7 +75,7 @@
 
 - Challenge ID: `day13-k4-observability-v1` (feature: `monitoring`, incident: `rag_slow`, latency_threshold_ms: 2000)
 - Triệu chứng từ metrics: Chạy `scripts/load_test.py --challenge` sau khi bật `rag_slow` (`scripts/inject_incident.py`) làm `latency_p95`/`latency_p99` tăng vọt lên **~2661ms** trong khi `latency_p50` chỉ **156ms** (`GET /metrics`), vượt ngưỡng `latency_threshold_ms=2000` của challenge; `error_rate_pct` vẫn 0% — đây là vấn đề latency, không phải lỗi request. Evidence: `submission/evidence/cp3-metrics-during-incident.json`, `submission/evidence/cp3-challenge-load-test.txt`.
-- Trace ID liên quan: <!-- TODO (Thắng) — dán trace ID trên Langfuse ứng với correlation_id req-790adaed (span retrieve chiếm phần lớn latency) -->
+- Trace ID liên quan: `7cad28af73c4ce87f52ef286a4f2b48b` (tra qua Langfuse API `GET /api/public/traces`, lọc theo `sessionId=k4-challenge-s02`, xác nhận `metadata.correlation_id=req-790adaed`, `latency=2.664s`, `prompt_version=1/production` — khớp với `latency_ms=2661` trong log và `latency_p95=2661` trong metrics). Evidence: `submission/evidence/cp3-trace-req-790adaed.json`.
 - Log line/correlation ID liên quan: `correlation_id=req-790adaed`, feature `monitoring`, `request_received` lúc `08:34:54.651Z` → `response_sent` lúc `08:34:57.322Z` (`latency_ms=2661`). Toàn bộ 5 request challenge đều có latency 2665–2685ms, gấp hơn 15 lần P50 baseline bình thường (~156–330ms từ load test thường). Evidence: `submission/evidence/cp3-logs-req-790adaed.jsonl`.
 - Root cause: `app/mock_rag.py` hàm `retrieve()` gọi `time.sleep(2.5)` khi cờ `STATE["rag_slow"]` được bật (qua `app/incidents.py`, kích hoạt bởi `scripts/inject_incident.py` theo `config/challenge.json`). Bước retrieval (RAG) trong `app/agent.py::LabAgent.run()` là span chạy trước khi gọi LLM, nên toàn bộ 2.5s delay cộng dồn vào latency tổng của request — khớp với latency đo được (~2.5s sleep + ~150-180ms xử lý còn lại).
 - Fix action: Trong tình huống thật, cần đặt timeout cho bước retrieval (ví dụ giới hạn 800ms-1s) kèm circuit breaker/fallback trả lời không kèm tài liệu khi vector store chậm, thay vì chờ vô thời hạn. Ở đây là incident giả lập nên fix là tắt lại cờ: `python scripts/inject_incident.py --disable` (đã thực hiện, xác nhận `rag_slow: false`).
