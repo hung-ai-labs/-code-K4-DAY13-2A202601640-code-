@@ -1,0 +1,47 @@
+---
+description: Phân công 4 vai trò và kế hoạch checkpoint Day 13 Observability
+alwaysApply: true
+---
+
+# Phân công nhóm & Checkpoint
+
+## 4 vai trò
+
+| Vai trò | Phụ trách chính | File / script liên quan |
+|---------|-----------------|-------------------------|
+| **Hùng — Logging & Middleware** | Correlation ID, metadata log (`user_id_hash`, `session_id`, `feature`, `model`, `env`) | `app/middleware.py`, `app/logging_config.py` |
+| **Hùng — Security & Compliance** | Uncomment PII processor, regex redaction (email, SĐT, số thẻ) | `app/logging_config.py`, processor PII |
+| **Hùng — Metrics & Alerting** | Langfuse (≥10 traces), prompt v1/v2, error_rate, SLO, alert, runbook | `app/tracing.py`, `config/alerts.yaml`, `docs/alerts.md` |
+| **Hùng — QA & Incident Analyst** | Load test, dashboard spec, CP3 incident, `submission/REPORT.md` | `config/dashboard.yaml`, `scripts/validate_*.py` |
+
+## Checkpoint
+
+### CP0 — Setup (0:00–0:30)
+- **Cả nhóm**: SETUP.md, API + load test chạy được.
+- **QA**: Chạy load test, đảm bảo có `data/logs.jsonl`.
+
+### CP1 — Logging & PII (0:30–1:30)
+- **Logging & Middleware**: Correlation ID mỗi request + đủ metadata.
+- **Security & Compliance**: Che PII toàn cục, không lộ nguyên văn trong log.
+- **Phối hợp A+B**: `python scripts/validate_logs.py` ≥ 80/100.
+- **Bàn giao**: Log có correlation ID và PII đã redacted.
+
+### CP2 — Metrics, traces, dashboard (1:30–2:30)
+- **Metrics & Alerting**: ≥10 traces Langfuse; prompt v1/v2 với `prompt_name`, `prompt_label`, `prompt_version`; SLO + alert + runbook; evidence rollback → `submission/evidence/`.
+- **QA**: Dashboard 6 nhóm chỉ số theo `config/dashboard.yaml`; `python scripts/validate_dashboard.py` hợp lệ.
+- **Bàn giao**: Ảnh dashboard (time range, đơn vị, threshold) + trace prompt.
+
+### CP3 — Challenge (2:30–3:30)
+- **QA**: Chủ trì sau khi Lab Coach release `config/challenge.json`; chạy incident input.
+- **Phối hợp**: Metrics (D+C) → trace khoanh span lỗi (C) → log xác minh root cause (A+B) → fix + preventive.
+- **Bàn giao**: Root cause, fix, preventive measure.
+
+### Hoàn tất (3:30–4:00)
+- **QA**: Hoàn thiện `submission/REPORT.md`; demo luồng **Metrics → Traces → Logs → Root cause**.
+- **Cả nhóm**: Không commit secret/`.env`/API key/PII chưa che; commit source + evidence hợp lệ.
+
+## Quy tắc khi agent hỗ trợ
+
+- Chỉ sửa phạm vi vai trò đang làm việc; phối hợp checkpoint thì ghi rõ ai làm gì.
+- Luôn chạy validator tương ứng trước khi coi checkpoint xong.
+- Evidence lưu tại `submission/evidence/`; báo cáo tại `submission/REPORT.md`.
