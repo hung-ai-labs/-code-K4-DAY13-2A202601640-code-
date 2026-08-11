@@ -1,0 +1,18 @@
+{
+  "captured_from": "GET /metrics",
+  "context": "Ngay sau khi chạy scripts/load_test.py --challenge với incident rag_slow đang bật",
+  "response": {
+    "traffic": 15,
+    "latency_p50": 156.0,
+    "latency_p95": 2661.0,
+    "latency_p99": 2661.0,
+    "avg_cost_usd": 0.002,
+    "total_cost_usd": 0.0298,
+    "tokens_in_total": 505,
+    "tokens_out_total": 1883,
+    "error_rate_pct": 0.0,
+    "error_breakdown": {},
+    "quality_avg": 0.8667
+  },
+  "note": "latency_p95/p99 (2661ms) cao gấp ~17 lan latency_p50 (156ms) trong khi error_rate_pct = 0 -> day la trieu chung latency, khong phai loi request."
+}

@@ -1,0 +1,10 @@
+$ python scripts/load_test.py --challenge
+Challenge: day13-k4-observability-v1 | Cohort: K4
+[200] req-790adaed | monitoring | 2681.3ms
+[200] req-4075ddb3 | monitoring | 2685.7ms
+[200] req-1040a191 | monitoring | 2667.9ms
+[200] req-a9c47390 | monitoring | 2667.7ms
+[200] req-01afb2f7 | monitoring | 2665.5ms
+
+Ngưỡng challenge (config/challenge.json): latency_threshold_ms = 2000
+=> Cả 5 request đều vượt ngưỡng (2665-2685ms), toàn bộ ở feature "monitoring".

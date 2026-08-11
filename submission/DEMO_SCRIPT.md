@@ -18,25 +18,27 @@ Luồng bắt buộc: **Metrics → Traces → Logs → Root cause → Fix**
 ## 2. Metrics (1.5 phút) — Quân trình bày
 
 - Mở dashboard, chỉ ra 6 nhóm chỉ số: latency P50/P95/P99, traffic, error rate, cost, token, quality.
-- Chỉ vào panel bất thường (latency tăng ở feature `monitoring` trong lúc chạy challenge) và SLO/threshold line đang bị vi phạm.
-- Nêu triệu chứng quan sát được từ metrics (không đoán nguyên nhân ở bước này).
+- Chỉ vào panel latency: **P95/P99 = 2661ms** trong khi **P50 = 156ms** (evidence: `submission/evidence/cp3-metrics-during-incident.json`), vượt SLO/threshold `latency_p95 > 3000ms`... thực tế đã sát ngưỡng cảnh báo và vượt hẳn `latency_threshold_ms=2000` của challenge. `error_rate_pct = 0%` — loại trừ nguyên nhân lỗi request.
+- Nêu triệu chứng: đây là vấn đề latency cục bộ ở feature `monitoring`, không phải lỗi hệ thống diện rộng.
 
 ## 3. Traces (1.5 phút) — Thắng trình bày
 
-- Mở Langfuse, lọc trace theo khoảng thời gian triệu chứng xuất hiện.
-- Mở một trace waterfall, chỉ ra span nào chiếm phần lớn thời gian (ví dụ span retrieval/RAG chậm).
+- Mở Langfuse, lọc trace theo khoảng thời gian challenge chạy (~08:34:54–08:35:xx UTC).
+- Mở trace ứng với `correlation_id=req-790adaed`, chỉ ra span retrieval/RAG chiếm phần lớn thời gian (~2.5s) so với span LLM.
 - Chỉ rõ `prompt_name`, `prompt_label`, `prompt_version` trên trace để xác nhận đúng phiên bản đang chạy.
+- <!-- TODO (Thắng): điền trace ID thật vào đây và vào submission/REPORT.md mục 6 -->
 
 ## 4. Logs (1.5 phút) — Tín trình bày
 
-- Lấy correlation ID / trace ID từ span nghi vấn ở bước 3.
-- Grep log theo correlation ID đó trong `data/logs.jsonl`, chỉ ra log chi tiết của span (timing, metadata, không có PII nguyên văn).
+- Lấy correlation ID `req-790adaed` từ span nghi vấn ở bước 3.
+- Mở `submission/evidence/cp3-logs-req-790adaed.jsonl`: `request_received` lúc `08:34:54.651Z` → `response_sent` lúc `08:34:57.322Z`, `latency_ms=2661`, không có PII nguyên văn (chỉ `user_id_hash`).
 - Đối chiếu log với trace để khớp thời gian và nguyên nhân.
 
 ## 5. Root cause & Fix (1.5 phút) — Hùng trình bày
 
-- Kết luận root cause dựa trên 3 lớp evidence đã trình bày (metrics chỉ triệu chứng → trace khoanh vùng span → log chứng minh nguyên nhân).
-- Đề xuất fix action cụ thể và preventive measure (ví dụ: cache/timeout cho retrieval, alert sớm hơn theo SLO).
+- Root cause: `app/mock_rag.py::retrieve()` gọi `time.sleep(2.5)` khi cờ incident `rag_slow` được bật (`scripts/inject_incident.py`, theo `config/challenge.json`) — span retrieval trong `app/agent.py::LabAgent.run()` chạy trước LLM nên toàn bộ 2.5s cộng dồn vào latency tổng, khớp với 2661ms đo được (metrics → trace → log đều thống nhất).
+- Fix action: đã tắt incident (`inject_incident.py --disable`, evidence `submission/evidence/cp3-incident-toggle.txt`); trong hệ thống thật cần đặt timeout ~800ms-1s cho bước retrieval kèm fallback trả lời không kèm tài liệu khi vector store chậm.
+- Preventive measure: alert riêng cho latency của span retrieval (không chỉ latency tổng), SLO P95 theo từng bước pipeline để cô lập nhanh nguồn gây chậm.
 - Tham chiếu đúng mục 6 trong `submission/REPORT.md`.
 
 ## 6. Q&A / cá nhân giải thích phần mình (còn lại)
