@@ -3,16 +3,16 @@
 ## 1. Thông tin nhóm
 
 - Tên nhóm: K4 — A2-1
-- Repository URL: https://github.com/hung-ai-labs/-code-K4-DAY13-2A202601640-code-
+- Repository URL: [https://github.com/hung-ai-labs/-code-K4-DAY13-2A202601640-code-](https://github.com/hung-ai-labs/-code-K4-DAY13-2A202601640-code-)
 - Commit SHA cuối: `5247def1b7147804dd0fd948e2f58f730f1fbd47` (cập nhật lại nếu có commit mới sau khi push bản này)
 - Thành viên và vai trò:
 
-| Họ tên | Mã học viên | Vai trò |
-|---|---|---|
-| Hồ Trung Tín | 2A202601688 | Logging & PII (correlation ID, log metadata, PII redaction) |
-| Nguyễn Mạnh Thắng | 2A202601944 | Tracing & Prompt Version (traces Langfuse, prompt v1/v2, rollback) |
-| Hoàng Minh Quân | 2A202601574 | Dashboard, SLO & Alert (6 panel dashboard, SLO threshold, alert rules & runbook) |
-| Nguyễn Xuân Hùng | 2A202601640 | Incident, Report & Demo (load test, điều tra challenge CP3, báo cáo, demo) |
+| Họ tên            | Mã học viên | Vai trò                                                                          |
+| ----------------- | ----------- | -------------------------------------------------------------------------------- |
+| Hồ Trung Tín      | 2A202601688 | Logging & PII (correlation ID, log metadata, PII redaction)                      |
+| Nguyễn Mạnh Thắng | 2A202601944 | Tracing & Prompt Version (traces Langfuse, prompt v1/v2, rollback)               |
+| Hoàng Minh Quân   | 2A202601574 | Dashboard, SLO & Alert (6 panel dashboard, SLO threshold, alert rules & runbook) |
+| Nguyễn Xuân Hùng  | 2A202601640 | Incident, Report & Demo (load test, điều tra challenge CP3, báo cáo, demo)       |
 
 ## 2. Kết quả kỹ thuật
 
@@ -21,10 +21,10 @@
 - Số PII leak còn lại: 0 (theo `validate_logs.py`)
 - Link/đường dẫn dashboard:
   - Runtime (local): `http://localhost:8501` — chạy bằng `streamlit run scripts/dashboard_app.py`
-  - Spec: [`docs/dashboard-spec.md`](../docs/dashboard-spec.md)
-  - Contract: [`config/dashboard.yaml`](../config/dashboard.yaml)
+  - Spec: `[docs/dashboard-spec.md](../docs/dashboard-spec.md)`
+  - Contract: `[config/dashboard.yaml](../config/dashboard.yaml)`
   - Live metrics API: `http://localhost:8000/metrics`
-  - Evidence ảnh: [`submission/evidence/dashboard-1.png`](evidence/dashboard-1.png), [`dashboard-2.png`](evidence/dashboard-2.png), [`dashboard-3.png`](evidence/dashboard-3.png)
+  - Evidence ảnh: `[submission/evidence/dashboard-1.png](evidence/dashboard-1.png)`, `[dashboard-2.png](evidence/dashboard-2.png)`, `[dashboard-3.png](evidence/dashboard-3.png)`
 
 ## 3. Logging và tracing
 
@@ -52,7 +52,7 @@
 
 ## 5. Dashboard, SLO và alerts
 
-- Kết quả `validate_dashboard.py`: `HỢP LỆ: 6/6 panel` — evidence [`submission/evidence/validate-dashboard.png`](evidence/validate-dashboard.png)
+- Kết quả `validate_dashboard.py`: `HỢP LỆ: 6/6 panel` — evidence `[submission/evidence/validate-dashboard.png](evidence/validate-dashboard.png)`
 - Evidence dashboard:
   - 6 panel: Latency, Traffic, Errors, Cost, Tokens, Quality
   - Công cụ: Streamlit (`scripts/dashboard_app.py`), nguồn live `/metrics`, charts từ `data/logs.jsonl`
@@ -64,15 +64,15 @@
   - `daily_cost_usd`: objective **2.5** USD, target **100%** — ngân sách lab/ngày; khớp threshold panel Cost.
   - `quality_score_avg`: objective **0.75**, target **95.0%** — chất lượng trả lời tối thiểu; khớp threshold panel Quality.
 - Alert rules và runbook (`config/alert_rules.yaml` + `docs/alerts.md`):
-  1. **`high_latency_p95`** (warning, owner: on-call-engineer)  
+  1. `high_latency_p95` (warning, owner: on-call-engineer)
      Điều kiện: `latency_p95 > 3000ms for 5 minutes`  
-     Runbook: [docs/alerts.md#alert-1](../docs/alerts.md#alert-1) — kiểm tra `/metrics` → panel Latency → trace/log theo correlation ID; mitigation: tắt incident, giảm concurrency.
-  2. **`elevated_error_rate`** (critical, owner: on-call-engineer)  
+      Runbook: [docs/alerts.md#alert-1](../docs/alerts.md#alert-1) — kiểm tra `/metrics` → panel Latency → trace/log theo correlation ID; mitigation: tắt incident, giảm concurrency.
+  2. `elevated_error_rate` (critical, owner: on-call-engineer)
      Điều kiện: `error_rate_pct > 5 for 3 minutes` (SLO vẫn ≤ 2%; alert critical cao hơn để tránh noise)  
-     Runbook: [docs/alerts.md#alert-2](../docs/alerts.md#alert-2) — `/metrics` + `error_breakdown` → `/health` + `request_failed` → trace/log; mitigation: disable incident, rollback config.
-  3. **`cost_budget_exceeded`** (warning, owner: team-lead)  
+      Runbook: [docs/alerts.md#alert-2](../docs/alerts.md#alert-2) — `/metrics` + `error_breakdown` → `/health` + `request_failed` → trace/log; mitigation: disable incident, rollback config.
+  3. `cost_budget_exceeded` (warning, owner: team-lead)
      Điều kiện: `daily_cost_usd > 2.5`  
-     Runbook: [docs/alerts.md#alert-3](../docs/alerts.md#alert-3) — đối chiếu cost/tokens trên `/metrics` và panel Cost → kiểm tra prompt/incident `cost_spike`; mitigation: rollback prompt, giảm concurrency.
+      Runbook: [docs/alerts.md#alert-3](../docs/alerts.md#alert-3) — đối chiếu cost/tokens trên `/metrics` và panel Cost → kiểm tra prompt/incident `cost_spike`; mitigation: rollback prompt, giảm concurrency.
 
 ## 6. Điều tra challenge
 
@@ -88,9 +88,9 @@
 
 Với mỗi thành viên, ghi rõ nhiệm vụ và link commit/PR tương ứng.
 
-| Thành viên | Phần việc | Commit/PR | Điều đã học |
-|---|---|---|---|
-| Tín | Correlation ID middleware, log enrichment, PII redaction (bao gồm regex phone/passport/address) | | |
-| Thắng | Phụ trách Tracing & Prompt Versioning. Tạo và kiểm tra ít nhất 10 traces trên Langfuse; kiểm tra các metadata `prompt_name`, `prompt_label`, `prompt_version`, `prompt_source`; quản lý prompt `day13-chat` với baseline v1 và candidate v2; chuyển label `production` sang v2 và thực hiện rollback về v1; xác minh kết quả bằng trace. Trong CP3, sử dụng Langfuse trace để khoanh vùng request chậm của feature `monitoring` trong incident `rag_slow`. | Hiểu cách sử dụng Langfuse để theo dõi traces của ứng dụng AI, quản lý managed prompt theo version/label, liên kết prompt version với trace, rollback prompt bằng cách thay đổi label mà không cần sửa code application, và sử dụng trace kết hợp với metrics/logs để điều tra incident. |
-| Quân | Dashboard 6 panel (Streamlit), SLO threshold (`config/slo.yaml`), alert rules & runbook (`config/alert_rules.yaml`, `docs/alerts.md`) | | |
-| Hùng | Load test, điều tra incident CP3 (root cause `rag_slow` trong `mock_rag.py`), viết REPORT.md, chuẩn bị demo | | |
+| Thành viên | Phần việc                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Commit/PR                                                                                                                                                                                                                                                                                | Điều đã học |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| Tín        | Correlation ID middleware, log enrichment, PII redaction (bao gồm regex phone/passport/address) + bonus Tối ưu chi phí & Audit Log                                                                                                                                                                                                                                                                                                                         | [cp1 + bonus by tinstins23 · Pull Request #1 · hung-ai-labs/-code-K4-DAY13-2A202601640-code-](https://github.com/hung-ai-labs/-code-K4-DAY13-2A202601640-code-/pull/1)                                                                                                                   |             |
+| Thắng      | Phụ trách Tracing & Prompt Versioning. Tạo và kiểm tra ít nhất 10 traces trên Langfuse; kiểm tra các metadata `prompt_name`, `prompt_label`, `prompt_version`, `prompt_source`; quản lý prompt `day13-chat` với baseline v1 và candidate v2; chuyển label `production` sang v2 và thực hiện rollback về v1; xác minh kết quả bằng trace. Trong CP3, sử dụng Langfuse trace để khoanh vùng request chậm của feature `monitoring` trong incident `rag_slow`. | Hiểu cách sử dụng Langfuse để theo dõi traces của ứng dụng AI, quản lý managed prompt theo version/label, liên kết prompt version với trace, rollback prompt bằng cách thay đổi label mà không cần sửa code application, và sử dụng trace kết hợp với metrics/logs để điều tra incident. |             |
+| Quân       | Dashboard 6 panel (Streamlit), SLO threshold (`config/slo.yaml`), alert rules & runbook (`config/alert_rules.yaml`, `docs/alerts.md`)                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                          |             |
+| Hùng       | Load test, điều tra incident CP3 (root cause `rag_slow` trong `mock_rag.py`), viết REPORT.md, chuẩn bị demo                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                                                                                                                                          |             |
