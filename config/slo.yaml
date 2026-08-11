@@ -4,13 +4,16 @@ slis:
   latency_p95_ms:
     objective: 3000
     target: 99.5
-    note: Replace with your group's target
+    note: "P95 latency must stay <= 3000ms (dashboard latency panel threshold)"
   error_rate_pct:
     objective: 2
     target: 99.0
+    note: "Failed requests / received requests * 100 must stay <= 2%"
   daily_cost_usd:
     objective: 2.5
     target: 100.0
+    note: "Total cost in the observed window must stay <= 2.5 USD"
   quality_score_avg:
     objective: 0.75
     target: 95.0
+    note: "Mean quality_score on response_sent must stay >= 0.75"
