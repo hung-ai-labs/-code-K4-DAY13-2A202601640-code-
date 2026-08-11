@@ -1,0 +1,5 @@
+$ python scripts/inject_incident.py
+200 {'ok': True, 'incidents': {'rag_slow': True, 'tool_fail': False, 'cost_spike': False}}
+
+$ python scripts/inject_incident.py --disable
+200 {'ok': True, 'incidents': {'rag_slow': False, 'tool_fail': False, 'cost_spike': False}}

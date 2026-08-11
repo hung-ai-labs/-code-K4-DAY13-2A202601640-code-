@@ -40,3 +40,8 @@ Sau khi Lab Coach release `config/challenge.json`:
 - Kiểm tra không có secret hoặc PII trong Git.
 - Commit toàn bộ phần việc hợp lệ.
 - Chuẩn bị demo ngắn theo luồng Metrics → Traces → Logs → Root cause.
+
+
+
+
+
