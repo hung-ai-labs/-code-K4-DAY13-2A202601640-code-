@@ -2,14 +2,17 @@
 
 ## 1. Thông tin nhóm
 
-- Tên nhóm: K4 — Nhóm 4 (Tín, Thắng, Quân, Hùng)
+- Tên nhóm: K4 — A2-1
 - Repository URL: https://github.com/hung-ai-labs/-code-K4-DAY13-2A202601640-code-
 - Commit SHA cuối: `5247def1b7147804dd0fd948e2f58f730f1fbd47` (cập nhật lại nếu có commit mới sau khi push bản này)
 - Thành viên và vai trò:
-  - Tín — Logging & PII (correlation ID, log metadata, PII redaction)
-  - Thắng — Tracing & Prompt Version (traces Langfuse, prompt v1/v2, rollback)
-  - Quân — Dashboard, SLO & Alert (6 panel dashboard, SLO threshold, alert rules & runbook)
-  - Hùng — Incident, Report & Demo (load test, điều tra challenge CP3, báo cáo, demo)
+
+| Họ tên | Mã học viên | Vai trò |
+|---|---|---|
+| Hồ Trung Tín | 2A202601688 | Logging & PII (correlation ID, log metadata, PII redaction) |
+| Nguyễn Mạnh Thắng | 2A202601944 | Tracing & Prompt Version (traces Langfuse, prompt v1/v2, rollback) |
+| Hoàng Minh Quân | 2A202601574 | Dashboard, SLO & Alert (6 panel dashboard, SLO threshold, alert rules & runbook) |
+| Nguyễn Xuân Hùng | 2A202601640 | Incident, Report & Demo (load test, điều tra challenge CP3, báo cáo, demo) |
 
 ## 2. Kết quả kỹ thuật
 
